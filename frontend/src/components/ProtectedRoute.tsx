@@ -1,25 +1,28 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
+import { CardGridSkeleton } from './ui/Skeleton'
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const router = useRouter()
+  const pathname = usePathname()
   const { user, isLoading } = useAuth()
 
   useEffect(() => {
     if (!isLoading && !user) {
-      router.push('/auth/login')
+      const next = typeof window !== 'undefined' ? pathname + window.location.search : pathname
+      router.replace(`/auth/login?next=${encodeURIComponent(next)}`)
     }
-  }, [user, isLoading, router])
+  }, [user, isLoading, router, pathname])
 
-  if (isLoading) {
-    return <div>Loading...</div>
-  }
-
-  if (!user) {
-    return null
+  if (isLoading || !user) {
+    return (
+      <div className="container-page py-12">
+        <CardGridSkeleton />
+      </div>
+    )
   }
 
   return <>{children}</>

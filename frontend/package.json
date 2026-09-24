@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
+    "dev:demo": "NEXT_PUBLIC_DEMO=true next dev --turbopack",
     "build": "next build",
+    "build:demo": "NEXT_PUBLIC_DEMO=true NEXT_PUBLIC_BASE_PATH=/EduTools next build && node scripts/export-demo.mjs",
     "start": "next start",
     "lint": "next lint"
   },
@@ -15,8 +17,7 @@
     "axios": "^1.7.9",
     "next": "15.1.7",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "zustand": "^5.0.3"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@types/node": "^20",

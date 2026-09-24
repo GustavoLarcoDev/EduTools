@@ -1,158 +1,41 @@
-import axios from 'axios';
-import { Career, Tool, Tutorial } from '@/types';
+/**
+ * API facade. In API mode every call goes to the Django REST backend (http-api.ts);
+ * with NEXT_PUBLIC_DEMO=true the same functions are served from bundled sample
+ * data (demo-api.ts) and no network requests are made.
+ */
+import * as http from './http-api'
+import * as demo from './demo-api'
+import { IS_DEMO } from './config'
 
-const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api',
-});
+const impl: Omit<typeof http, 'api'> = IS_DEMO ? demo : http
 
-// Interceptor para agregar el token a las peticiones
-api.interceptors.request.use(
-  (config) => {
-    if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('token');
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+export const {
+  register,
+  login,
+  loginWithGoogle,
+  verifyToken,
+  getCareers,
+  getCareer,
+  createCareer,
+  updateCareer,
+  deleteCareer,
+  getTools,
+  getTool,
+  createTool,
+  updateTool,
+  deleteTool,
+  getTutorials,
+  getTutorial,
+  createTutorial,
+  updateTutorial,
+  deleteTutorial,
+  createCheckoutSession,
+} = impl
 
-// Interceptor para manejar errores de autenticación
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      // Token inválido o expirado
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('token');
-        window.location.href = '/auth/login';
-      }
-    }
-    return Promise.reject(error);
-  }
-);
+export const { loginAsDemo, resetDemoData } = demo
 
-// Auth
-export const register = async (data: {
-  email: string;
-  password: string;
-  first_name: string;
-  last_name: string;
-}) => {
-  const response = await api.post('auth/register/', data);
-  return response.data;
-};
-
-export const login = async (data: { email: string; password: string }) => {
-  const response = await api.post('auth/login/', data);
-  return response.data;
-};
-
-export const loginWithGoogle = async (code: string) => {
-  const response = await api.post('auth/google/', { code });
-  return response.data;
-};
-
-export const verifyToken = async (token: string) => {
-  const response = await api.get('auth/verify-token/', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return response.data;
-};
-
-// Careers
-export const getCareers = async () => {
-  const response = await api.get('careers/');
-  return response.data;
-};
-
-export const getCareer = async (id: number) => {
-  const response = await api.get(`careers/${id}/`);
-  return response.data;
-};
-
-export const createCareer = async (data: Partial<Career>) => {
-  const response = await api.post('careers/', data);
-  return response.data;
-};
-
-export const updateCareer = async (id: number, data: Partial<Career>) => {
-  const response = await api.put(`careers/${id}/`, data);
-  return response.data;
-};
-
-export const deleteCareer = async (id: number) => {
-  await api.delete(`careers/${id}/`);
-};
-
-// Tools
-export const getTools = async (params?: { career?: number }) => {
-  const response = await api.get('tools/', { params });
-  return response.data;
-};
-
-export const getTool = async (id: number) => {
-  const response = await api.get(`tools/${id}/`);
-  return response.data;
-};
-
-export const createTool = async (data: FormData) => {
-  const response = await api.post('tools/', data, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
-  return response.data;
-};
-
-export const updateTool = async (id: number, data: FormData) => {
-  const response = await api.put(`tools/${id}/`, data, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
-  return response.data;
-};
-
-export const deleteTool = async (id: number) => {
-  await api.delete(`tools/${id}/`);
-};
-
-// Tutorials
-export const getTutorials = async (params?: { career?: number; tool?: number }) => {
-  const response = await api.get('tutorials/', { params });
-  return response.data;
-};
-
-export const getTutorial = async (id: number) => {
-  const response = await api.get(`tutorials/${id}/`);
-  return response.data;
-};
-
-export const createTutorial = async (data: Partial<Tutorial>) => {
-  const response = await api.post('tutorials/create/', data);
-  return response.data;
-};
-
-export const updateTutorial = async (id: number, data: Partial<Tutorial>) => {
-  const response = await api.put(`tutorials/${id}/update/`, data);
-  return response.data;
-};
-
-export const deleteTutorial = async (id: number) => {
-  await api.delete(`tutorials/${id}/delete/`);
-};
-
-// Subscriptions
-export const createCheckoutSession = async () => {
-  const response = await api.post('subscriptions/create-checkout-session/');
-  return response.data;
-};
-
-export default api;
+/** Best-effort human readable message from an axios / demo error. */
+export function errorMessage(error: unknown, fallback = 'Algo salió mal. Inténtalo de nuevo.') {
+  const e = error as { response?: { data?: { error?: string; detail?: string } }; message?: string }
+  return e?.response?.data?.error || e?.response?.data?.detail || fallback
+}

@@ -1,21 +1,16 @@
 'use client'
 
-import React, { createContext, useContext, useState, useEffect } from 'react'
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { verifyToken } from '@/lib/api'
-
-interface User {
-  id: number
-  email: string
-  first_name: string
-  last_name: string
-  role: string
-}
+import type { User } from '@/types'
 
 interface AuthContextType {
   user: User | null
   isLoading: boolean
   isAdmin: boolean
   isClient: boolean
+  /** Whether the current user may open premium tools and tutorials. */
+  canAccessPremium: boolean
   login: (token: string, userData: User) => void
   logout: () => void
 }
@@ -28,50 +23,57 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const initAuth = async () => {
-      const token = localStorage.getItem('token')
+      let token: string | null = null
+      try {
+        token = localStorage.getItem('token')
+      } catch {
+        token = null
+      }
       if (token) {
         try {
-          const userData = await verifyToken(token)
-          setUser(userData)
-        } catch (error) {
-          console.error('Error verifying token:', error)
-          localStorage.removeItem('token')
+          setUser(await verifyToken(token))
+        } catch {
+          try {
+            localStorage.removeItem('token')
+          } catch {
+            /* ignore */
+          }
           setUser(null)
         }
       }
       setIsLoading(false)
     }
-
     initAuth()
   }, [])
 
-  const login = (token: string, userData: User) => {
-    localStorage.setItem('token', token)
+  const login = useCallback((token: string, userData: User) => {
+    try {
+      localStorage.setItem('token', token)
+    } catch {
+      /* ignore */
+    }
     setUser(userData)
-  }
+  }, [])
 
-  const logout = () => {
-    localStorage.removeItem('token')
+  const logout = useCallback(() => {
+    try {
+      localStorage.removeItem('token')
+    } catch {
+      /* ignore */
+    }
     setUser(null)
-  }
+  }, [])
 
-  const isAdmin = user?.role === 'admin'
-  const isClient = user?.role === 'client'
+  const value = useMemo<AuthContextType>(() => {
+    const isAdmin = user?.role === 'admin'
+    const isClient = user?.role === 'client'
+    // The API does not return `is_premium` in auth responses yet; premium content is
+    // already filtered server-side, so clients keep access unless the flag says otherwise.
+    const canAccessPremium = isAdmin || user?.is_premium === true || (isClient && user?.is_premium === undefined)
+    return { user, isLoading, isAdmin, isClient, canAccessPremium, login, logout }
+  }, [user, isLoading, login, logout])
 
-  const value = {
-    user,
-    isLoading,
-    isAdmin,
-    isClient,
-    login,
-    logout,
-  }
-
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  )
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
 export function useAuth() {
