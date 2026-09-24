@@ -28,6 +28,19 @@ export default function ToolForm({ tool, careers, defaultCareer, onClose, onSubm
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    const missing = !formData.title.trim()
+      ? 'El título es obligatorio.'
+      : !formData.description.trim()
+        ? 'La descripción es obligatoria.'
+        : !formData.career
+          ? 'Selecciona una carrera.'
+          : !tool && !IS_DEMO && !fileRef.current?.files?.[0]
+            ? 'Adjunta un archivo.'
+            : ''
+    if (missing) {
+      setError(missing)
+      return
+    }
     const form = new FormData()
     form.append('title', formData.title)
     form.append('description', formData.description)
@@ -50,7 +63,7 @@ export default function ToolForm({ tool, careers, defaultCareer, onClose, onSubm
 
   return (
     <Modal open onClose={onClose} title={tool ? 'Editar herramienta' : 'Nueva herramienta'} description="Plantillas, guías y archivos descargables para una carrera.">
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} noValidate className="space-y-5">
         <div>
           <label htmlFor="title" className="label">Título</label>
           <input id="title" required className="input" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} />

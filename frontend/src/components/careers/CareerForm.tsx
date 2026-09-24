@@ -19,6 +19,11 @@ export default function CareerForm({ career, onClose, onSubmit }: CareerFormProp
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    const missing = !formData.name.trim() ? 'El nombre es obligatorio.' : !formData.description.trim() ? 'La descripción es obligatoria.' : ''
+    if (missing) {
+      setError(missing)
+      return
+    }
     setBusy(true)
     setError('')
     try {
@@ -33,7 +38,7 @@ export default function CareerForm({ career, onClose, onSubmit }: CareerFormProp
 
   return (
     <Modal open onClose={onClose} title={career ? 'Editar carrera' : 'Nueva carrera'} description="Las carreras agrupan tutoriales y herramientas.">
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} noValidate className="space-y-5">
         <div>
           <label htmlFor="name" className="label">Nombre</label>
           <input id="name" required className="input" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} placeholder="Ej. Ingeniería Civil" />

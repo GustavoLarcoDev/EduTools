@@ -22,11 +22,11 @@ export function FilterBar({ careers, selected, onSelect, query, onQuery, placeho
 
   return (
     <div className="sticky top-16 z-30 -mx-4 border-b border-line/70 bg-surface/85 px-4 py-3 backdrop-blur-md sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between lg:gap-6">
         <div
           role="group"
           aria-label="Filtrar por carrera"
-          className="-mx-4 flex min-w-0 gap-2 overflow-x-auto px-4 py-0.5 [scrollbar-width:none] sm:mx-0 sm:px-0 lg:flex-1 lg:pr-6 lg:[mask-image:linear-gradient(to_right,black_92%,transparent)] [&::-webkit-scrollbar]:hidden"
+          className="-mx-4 flex min-w-0 gap-2 overflow-x-auto px-4 py-0.5 [scrollbar-width:none] sm:mx-0 sm:px-0 lg:flex-1 lg:flex-wrap lg:overflow-visible [&::-webkit-scrollbar]:hidden"
         >
           <button type="button" className={pill(!selected)} aria-pressed={!selected} onClick={() => onSelect(undefined)}>
             Todas

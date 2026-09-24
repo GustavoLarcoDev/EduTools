@@ -5,7 +5,7 @@ Next.js 15 + TypeScript frontend on top of a Django REST Framework API with JWT 
 
 [![Live demo](https://img.shields.io/badge/Live%20demo-gustavolarcodev.github.io%2FEduTools-6D5DFC?style=for-the-badge)](https://gustavolarcodev.github.io/EduTools/)
 
-> **About the live demo:** it is a static export of the frontend hosted on GitHub Pages. The Django backend is **not deployed**; a bundled sample-data layer stands in for the API, so every screen works (including admin create/edit/delete) and changes live only in your browser tab. Sign in with one click as **Student** or **Admin**. The UI is in Spanish.
+> **About the live demo:** it is a static export of the frontend hosted on GitHub Pages. The Django backend is **not deployed**; a bundled sample-data layer stands in for the API, so every screen works (including admin create/edit/delete) and changes live only in your browser tab. Browse the catalog as a guest right away, or sign in with one click as **Student** or **Admin** (admin unlocks create/edit/delete and Premium content). The UI is in Spanish.
 
 ![Home page](.github/screenshots/home.jpg)
 

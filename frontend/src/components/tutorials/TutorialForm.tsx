@@ -31,6 +31,17 @@ export default function TutorialForm({ tutorial, careers, tools, defaultCareer, 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    const missing = !formData.title.trim()
+      ? 'El título es obligatorio.'
+      : !formData.content.trim()
+        ? 'El contenido es obligatorio.'
+        : !formData.career
+          ? 'Selecciona una carrera.'
+          : ''
+    if (missing) {
+      setError(missing)
+      return
+    }
     setBusy(true)
     setError('')
     try {
@@ -49,7 +60,7 @@ export default function TutorialForm({ tutorial, careers, tools, defaultCareer, 
 
   return (
     <Modal open onClose={onClose} size="lg" title={tutorial ? 'Editar tutorial' : 'Nuevo tutorial'} description="Guías paso a paso asociadas a una carrera y, opcionalmente, a una herramienta.">
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} noValidate className="space-y-5">
         <div>
           <label htmlFor="title" className="label">Título</label>
           <input id="title" required className="input" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} />

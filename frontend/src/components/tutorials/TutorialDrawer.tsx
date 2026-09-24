@@ -5,6 +5,7 @@ import { LockClosedIcon, PlayCircleIcon, WrenchScrewdriverIcon, XMarkIcon } from
 import type { Career, Tool, Tutorial } from '@/types'
 import { CareerTag, PremiumBadge } from '../ui/career-style'
 import { readingTime } from './TutorialCard'
+import { RichText } from './RichText'
 
 interface Props {
   open: boolean
@@ -63,11 +64,7 @@ export default function TutorialDrawer({ open, tutorial, career, tool, locked, o
                       </button>
                     </div>
                   ) : (
-                    <div className="space-y-4 text-[15px] leading-7 text-slate-700">
-                      {tutorial.content.split(/\n{2,}/).map((para, i) => (
-                        <p key={i}>{para}</p>
-                      ))}
-                    </div>
+                    <RichText text={tutorial.content} />
                   )}
 
                   {tool && (

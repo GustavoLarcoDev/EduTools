@@ -3,6 +3,7 @@
 import { BookOpenIcon, LockClosedIcon, PencilSquareIcon, PlayCircleIcon, TrashIcon, WrenchScrewdriverIcon } from '@heroicons/react/24/outline'
 import type { Career, Tool, Tutorial } from '@/types'
 import { CareerTag, PremiumBadge } from '../ui/career-style'
+import { plainExcerpt } from './RichText'
 
 interface TutorialCardProps {
   tutorial: Tutorial
@@ -34,7 +35,7 @@ export default function TutorialCard({ tutorial, career, tool, locked, onOpen, o
           </button>
         </h3>
         <p className={`mt-2 line-clamp-3 text-sm leading-6 text-slate-600 ${locked ? 'select-none blur-[3px]' : ''}`} aria-hidden={locked}>
-          {tutorial.content}
+          {plainExcerpt(tutorial.content)}
         </p>
         {locked && <p className="sr-only">Contenido premium bloqueado.</p>}
 

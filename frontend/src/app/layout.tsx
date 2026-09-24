@@ -8,7 +8,7 @@ const sans = Plus_Jakarta_Sans({ subsets: ['latin'], variable: '--font-sans', di
 const display = Bricolage_Grotesque({ subsets: ['latin'], variable: '--font-display', display: 'swap', weight: ['600', '700', '800'] })
 
 const description =
-  'Tutoriales y herramientas descargables organizados por carrera universitaria. Next.js + Django REST, con roles, contenido Premium y Stripe.'
+  'Tutoriales y herramientas descargables organizados por carrera universitaria. Next.js + Django REST, con roles y contenido Premium (pagos con Stripe en desarrollo).'
 
 export const metadata: Metadata = {
   metadataBase: new URL(IS_DEMO ? SITE_URL : 'http://localhost:3000/'),
@@ -42,7 +42,16 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es" className={`${sans.variable} ${display.variable}`}>
+    <html lang="es" className={`${sans.variable} ${display.variable}`} suppressHydrationWarning>
+      <head>
+        {/* Enables the scroll-reveal hidden state only when JS runs; a safety timer reveals everything after 2.5 s. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "document.documentElement.classList.add('js');setTimeout(function(){document.querySelectorAll('.reveal').forEach(function(e){e.classList.add('is-visible')})},2500)",
+          }}
+        />
+      </head>
       <body>
         <ClientLayout>{children}</ClientLayout>
       </body>
