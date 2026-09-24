@@ -39,3 +39,6 @@ yarn-error.log*
 # OS
 .DS_Store
 Thumbs.db
+
+# Stray local uploads (real uploads go to /backend/media/)
+/backend/tools/
