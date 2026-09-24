@@ -2,6 +2,8 @@ from django.db import migrations
 from django.contrib.auth.hashers import make_password
 
 def create_admin_user(apps, schema_editor):
+    # DEVELOPMENT ONLY: seeds a local admin account with a well-known password.
+    # Change or delete this user before using the database anywhere public.
     User = apps.get_model('core', 'User')
     admin = User.objects.create(
         username='admin@edutools.com',
